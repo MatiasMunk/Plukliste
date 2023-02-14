@@ -122,7 +122,9 @@ GetExportData(std::string& FileName)
         std::cout << "Addresse - " << ExportData.Address << std::endl;
 #endif
         
-        for(auto JsonIterator = ExportJson["Pluklist"]["Lines"]["Item"].begin(); JsonIterator != ExportJson["Pluklist"]["Lines"]["Item"].end(); ++JsonIterator)
+        for(auto JsonIterator = ExportJson["Pluklist"]["Lines"]["Item"].begin();
+            JsonIterator != ExportJson["Pluklist"]["Lines"]["Item"].end();
+            ++JsonIterator)
         {
             export_product_data ExportProduct = {};
             ExportProduct.ProductId = (*JsonIterator)["ProductID"].get<std::string>();
