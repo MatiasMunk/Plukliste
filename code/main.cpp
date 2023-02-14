@@ -222,6 +222,9 @@ GetExportProductsInHTML(export_data ExportData)
     return ExportProducts;
 }
 
+#define Upgrade 1
+#define Termination 2
+#define Welcome 3
 void
 Print(uint8 PrintType, export_data ExportData)
 {
@@ -230,17 +233,17 @@ Print(uint8 PrintType, export_data ExportData)
     
     switch(PrintType)
     {
-        case 1:
+        case Upgrade:
         {
             PrintFilePrefix = "Upgrade-";
             sprintf(File, "PRINT-OPGRADE.html");
         } break;
-        case 2:
+        case Termination:
         {
             PrintFilePrefix = "Termination-";
             sprintf(File, "PRINT-OPSIGELSE.html");
         } break;
-        case 3:
+        case Welcome:
         {
             PrintFilePrefix = "Welcome-";
             sprintf(File, "PRINT-WELCOME.html");
@@ -355,15 +358,15 @@ main()
                 {
                     case 'u':
                     {
-                        Print(1, ExportData);
+                        Print(Upgrade, ExportData);
                     } break;
                     case 't':
                     {
-                        Print(2, ExportData);
+                        Print(Termination, ExportData);
                     } break;
                     case 'w':
                     {
-                        Print(3, ExportData);
+                        Print(Welcome, ExportData);
                     } break;
                 }
             } break;
