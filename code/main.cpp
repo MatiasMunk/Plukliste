@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <vector>
 
@@ -13,10 +14,11 @@
 #endif
 
 #include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 #define MAX_DIRECTORY_PATH_LENGTH MAX_PATH //Define macro with different name, due to the fact that MAX_PATH is ambiguous
 
-using json = nlohmann::json;
+typedef unsigned char uint8;
 
 struct
 export_product_data
@@ -36,6 +38,16 @@ export_data
     
     std::vector<export_product_data> ExportProducts;
 };
+
+void
+FindAndReplace(std::string& SourceString, std::string ReplaceString, std::string ReplaceWith)
+{
+    std::size_t pos = SourceString.find(ReplaceString);
+    if(pos != std::string::npos)
+    {
+        SourceString.replace(pos, std::string(ReplaceString).length(), ReplaceWith);
+    }
+}
 
 std::vector<std::string>
 ListDirectoryContents(const char *DirectoryPath)
@@ -179,7 +191,82 @@ OutputConsoleInformation(std::vector<std::string> ExportFiles, export_data Expor
             << std::endl;
     }
     
-    printf("\n[O]ptions:\n[Q]uit\n[D]elete export\n[P]revious export\n[N]ext export\n[R]eload exports\n");
+    printf("\n[O]ptions:\n[Q]uit\n[D]elete export\n[B]ack\n[N]ext\n[R]eload exports\n[P]rint\n");
+}
+
+std::string
+GetExportProductsInHTML(export_data ExportData)
+{
+    std::string ExportProducts;
+    
+    ExportProducts.append("<table>");
+    ExportProducts.append("<tr>");
+    ExportProducts.append("<th>Antal</th>");
+    ExportProducts.append("<th>Produktnr.</th>");
+    ExportProducts.append("<th>Navn</th>");
+    ExportProducts.append("</tr>");
+    
+    for(int ExportProductIndex = 0;
+        ExportProductIndex < (int)ExportData.ExportProducts.size();
+        ++ExportProductIndex)
+    {
+        ExportProducts.append("<tr>");
+        ExportProducts.append("<td>" + std::to_string(ExportData.ExportProducts.at(ExportProductIndex).Amount) + "</td>");
+        ExportProducts.append("<td>" + ExportData.ExportProducts.at(ExportProductIndex).ProductId + "</td>");
+        ExportProducts.append("<td>" + ExportData.ExportProducts.at(ExportProductIndex).Title + "</td>");
+        ExportProducts.append("</tr>");
+    }
+    
+    ExportProducts.append("</table>");
+    
+    return ExportProducts;
+}
+
+void
+Print(uint8 PrintType, export_data ExportData)
+{
+    char File[20];
+    std::string PrintFilePrefix;
+    
+    switch(PrintType)
+    {
+        case 1:
+        {
+            PrintFilePrefix = "Upgrade-";
+            sprintf(File, "PRINT-OPGRADE.html");
+        } break;
+        case 2:
+        {
+            PrintFilePrefix = "Termination-";
+            sprintf(File, "PRINT-OPSIGELSE.html");
+        } break;
+        case 3:
+        {
+            PrintFilePrefix = "Welcome-";
+            sprintf(File, "PRINT-WELCOME.html");
+        } break;
+    }
+    
+    std::ifstream PrintFile("templates/" + std::string(File));
+    if(PrintFile.is_open())
+    {
+        std::stringstream buffer;
+        buffer << PrintFile.rdbuf();
+        
+        std::string temp_file_contents = buffer.str();
+        
+        FindAndReplace(temp_file_contents, "[Adresse]", ExportData.Address);
+        FindAndReplace(temp_file_contents, "[Name]", ExportData.Name);
+        FindAndReplace(temp_file_contents, "[Plukliste]", GetExportProductsInHTML(ExportData));
+        
+        std::ofstream OutFile("udskrift/" + PrintFilePrefix + ExportData.Name + ".html");
+        if(OutFile.is_open())
+        {
+            OutFile << temp_file_contents;
+        }
+        OutFile.close();
+    }
+    PrintFile.close();
 }
 
 int
@@ -215,7 +302,8 @@ main()
               input != 'd' &&
               input != 'p' &&
               input != 'n' &&
-              input != 'r')
+              input != 'r' &&
+              input != 'u')
         {
             input = _getch();
         }
@@ -223,13 +311,11 @@ main()
         switch(input)
         {
             case 'q':
-            case 'Q':
             {
                 ApplicationIsRunning = false;
             } break;
             
             case 'd':
-            case 'D':
             {
                 if(ExportFiles.size() > 0)
                 {
@@ -237,18 +323,49 @@ main()
                 }
             } break;
             
-            case 'p':
-            case 'P':
+            case 'b':
             {
                 SelectedExport -= 1;
             } break;
             
             case 'n':
-            case 'N':
             {
                 SelectedExport += 1;
                 if(SelectedExport >= ExportFiles.size())
                     SelectedExport = 0;
+            } break;
+            
+            case 'p':
+            {
+#ifdef WIN32
+                std::system("cls");
+#elif LINUX
+                clrscr();
+#endif
+                printf("[U]pgrade\n[T]erminate\n[W]elcome");
+                input = _getch();
+                while(input != 'u' &&
+                      input != 't' &&
+                      input != 'w')
+                {
+                    input = _getch();
+                }
+                
+                switch(input)
+                {
+                    case 'u':
+                    {
+                        Print(1, ExportData);
+                    } break;
+                    case 't':
+                    {
+                        Print(2, ExportData);
+                    } break;
+                    case 'w':
+                    {
+                        Print(3, ExportData);
+                    } break;
+                }
             } break;
         }
     }
