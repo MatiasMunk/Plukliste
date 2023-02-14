@@ -102,7 +102,7 @@ ListDirectoryContents(const char *DirectoryPath)
 }
 
 export_data
-GetExport(std::string& FileName)
+GetExportData(std::string& FileName)
 {
     std::ifstream ExportFile(FileName);
     json ExportJson = {};
@@ -203,7 +203,7 @@ main()
         
         if(ExportFiles.size() > 0)
         {
-            ExportData = GetExport(ExportFiles.at(SelectedExport));
+            ExportData = GetExportData(ExportFiles.at(SelectedExport));
             
             OutputConsoleInformation(ExportFiles, ExportData, SelectedExport);
         }
