@@ -52,7 +52,7 @@ ListDirectoryContents(const char *DirectoryPath)
     
     if((FileHandle = FindFirstFile(Path, &File)) == INVALID_HANDLE_VALUE)
     {
-        printf("Path not found [%s]\n", DirectoryPath);
+        printf("Path is invalid, or no exports were found\n");
         return ExportFiles;
     }
     
@@ -183,25 +183,30 @@ OutputConsoleInformation(std::vector<std::string> ExportFiles, export_data Expor
 int
 main()
 {
-    std::vector<std::string> ExportFiles = ListDirectoryContents("exports");
-    
+    std::vector<std::string> ExportFiles;
+    export_data ExportData;
     int SelectedExport = 0;
-    export_data ExportData = GetExport(ExportFiles.at(SelectedExport));
     
     bool ApplicationIsRunning = true;
     
-    OutputConsoleInformation(ExportFiles, ExportData, SelectedExport);
-    
     while(ApplicationIsRunning)
     {
+#ifdef WIN32
+        std::system("cls");
+#elif LINUX
+        clrscr();
+#endif
         ExportFiles = ListDirectoryContents("exports");
         
         if(SelectedExport >= ExportFiles.size())
             SelectedExport = ExportFiles.size() - 1;
         
-        export_data ExportData = GetExport(ExportFiles.at(SelectedExport));
-        
-        OutputConsoleInformation(ExportFiles, ExportData, SelectedExport);
+        if(ExportFiles.size() > 0)
+        {
+            ExportData = GetExport(ExportFiles.at(SelectedExport));
+            
+            OutputConsoleInformation(ExportFiles, ExportData, SelectedExport);
+        }
         
         char input = _getch();
         while(input != 'q' &&
@@ -224,7 +229,10 @@ main()
             case 'd':
             case 'D':
             {
-                DeleteExport(ExportFiles.at(SelectedExport));
+                if(ExportFiles.size() > 0)
+                {
+                    DeleteExport(ExportFiles.at(SelectedExport));
+                }
             } break;
             
             case 'p':
