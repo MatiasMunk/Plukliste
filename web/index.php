@@ -1,5 +1,6 @@
 <?php
-    require 'config.php';
+	$title = "Forside";
+    require 'header.php';
 	
 	if(isset($_GET['ID']))
 	{
@@ -22,4 +23,28 @@
 		echo '</table>';
 	}
 	
-	?>
+?>
+
+	<ul class="menu">
+		<li><a href="#" class="active">Hjem</a></li>
+		<li><a href="stock.php">Lager</a></li>
+		<li><a href="#kontakt">Kontakt</a></li>
+		<li style="float:right"><a href="#om">Om</a></li>
+		<li style="float:right"><a href="product_api.php">API</a></li>
+	</ul> 
+
+	<div>
+		<form action="/index.php" method="POST">
+			<label for="ProduktId">Produkt ID:</label>
+			<input type="text" id="ProduktId" name="ProduktId"><br />
+
+			<label for="Stock">Lager:</label>
+			<input type="text" id="Stock" name="Stock"><br />
+
+			<input type="submit" value="Opret">
+		</form>
+	</div>
+
+<?php
+	require_once 'footer.php';
+?>
