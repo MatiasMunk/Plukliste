@@ -32,7 +32,7 @@
                 {
                     echo '<tr>';
                         echo '<th>' . $row['id'] . '</th>';
-                        echo '<th>' . $row['product_id']. '</th>';
+                        echo '<th>' . $row['product_id'] . '</th>';
                         echo '<th>' . $row['stock'] . '</th>';
                     echo '</tr>';
                 }

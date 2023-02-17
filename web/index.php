@@ -34,15 +34,6 @@
 	</ul> 
 
 	<div>
-		<form action="/index.php" method="POST">
-			<label for="ProduktId">Produkt ID:</label>
-			<input type="text" id="ProduktId" name="ProduktId"><br />
-
-			<label for="Stock">Lager:</label>
-			<input type="text" id="Stock" name="Stock"><br />
-
-			<input type="submit" value="Opret">
-		</form>
 	</div>
 
 <?php

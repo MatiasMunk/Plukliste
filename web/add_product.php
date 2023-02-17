@@ -10,7 +10,7 @@
 ?>
 
 	<ul class="menu">
-		<li><a href="#" class="active">Hjem</a></li>
+		<li><a href="#">Hjem</a></li>
 		<li><a href="stock.php">Lager</a></li>
 		<li><a href="#kontakt">Kontakt</a></li>
 		<li style="float:right"><a href="#om">Om</a></li>
