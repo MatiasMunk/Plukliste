@@ -1,6 +1,7 @@
 #include <conio.h>
 #include <cstdio>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -22,17 +23,22 @@ OutputConsoleInformation(std::vector<std::string> ExportFiles, export_data Expor
     std::cout << "Forsendelse: \t" << ExportData.ShippingType << std::endl;
     std::cout << "Addresse: \t" << ExportData.Address << std::endl << std::endl;
     
-    std::cout << "Antal\tType\t\tProduktnr.\t\tNavn\t\t\t\tRest" << std::endl;
+    
+    std::cout << std::setw(9) << std::left << "Antal"
+        << std::setw(8) << std::left << "Type"
+        << std::setw(25) << std::left << "Produktnr."
+        << std::setw(30) << std::left << "Navn"
+        << std::setw(9) << std::left << "Lager"
+        << std::endl;
+    
     for(int ExportProductIndex = 0;
         ExportProductIndex < (int)ExportData.ExportProducts.size();
         ++ExportProductIndex)
     {
-        int Stock = 0;//db.Query(DBQuery.c_str());
-        std::string DBQuery;
-        if(ExportData.ExportProducts.at(ExportProductIndex).ProductId.find("PRINT") == std::string::npos)
+        if(IsActualProduct(ExportData.ExportProducts.at(ExportProductIndex)))
         {
-            DBQuery = "SELECT `stock` FROM `products` WHERE `product_id` = '" +
-                std::string(ExportData.ExportProducts.at(ExportProductIndex).ProductId.c_str()) + "';";
+            int Stock = 0;
+            std::string DBQuery = "SELECT `stock` FROM `products` WHERE `product_id` = \"" + std::string(ExportData.ExportProducts.at(ExportProductIndex).ProductId.c_str()) + "\";";
             
             Database_Result res = db.Query(DBQuery.c_str());
             MYSQL_ROW row;
@@ -47,14 +53,14 @@ OutputConsoleInformation(std::vector<std::string> ExportFiles, export_data Expor
                     Stock = row[i] ? std::atoi(row[i]) : 0;
                 }
             }
+            
+            std::cout << std::setw(9) << std::left << ExportData.ExportProducts.at(ExportProductIndex).Amount
+                << std::setw(8) << std::left << ExportData.ExportProducts.at(ExportProductIndex).Type.c_str()
+                << std::setw(25) << std::left << ExportData.ExportProducts.at(ExportProductIndex).ProductId.c_str()
+                << std::setw(30) << std::left << ExportData.ExportProducts.at(ExportProductIndex).Title.c_str()
+                << std::setw(9) << std::left << std::to_string(Stock)
+                << std::endl;
         }
-        
-        std::cout << ExportData.ExportProducts.at(ExportProductIndex).Amount << "\t"
-            << ExportData.ExportProducts.at(ExportProductIndex).Type.c_str() << "\t\t"
-            << ExportData.ExportProducts.at(ExportProductIndex).ProductId.c_str() << "\t\t"
-            << ExportData.ExportProducts.at(ExportProductIndex).Title.c_str() << "\t\t"
-            << Stock << "\t\t"
-            << std::endl;
     }
     
     printf("\n[O]ptions:\n[Q]uit\n[D]elete export\n[B]ack\n[N]ext\n[R]eload exports\n[P]rint\n");
@@ -169,7 +175,7 @@ main()
             {
                 if(ExportFiles.size() > 0)
                 {
-                    DeleteExport(ExportFiles.at(SelectedExport));
+                    DeleteExport(db, ExportFiles.at(SelectedExport));
                 }
             } break;
             

@@ -1,1 +1,0 @@
-https://dev.to/codeanddeploy/php-mysql-ajax-example-using-jquery-35g4

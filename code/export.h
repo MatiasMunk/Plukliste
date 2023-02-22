@@ -3,6 +3,7 @@
 #ifndef EXPORT_H
 #define EXPORT_H
 
+#include <iostream>
 #include <fstream>
 
 #ifdef WIN32
@@ -11,6 +12,8 @@
 #include <limits.h> //Linux MAX_PATH
 #include <dirent.h> //Linux Directory manipulation
 #endif
+
+#include "database.h"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -47,10 +50,13 @@ GetExportDataJson(std::ifstream& File);
 export_data
 GetExportDataCSV(std::ifstream& File);
 
+bool
+IsActualProduct(export_product_data ExportProduct);
+
 export_data
 GetExportData(std::string& FileName);
 
-bool DeleteExport(std::string& FileName);
+bool DeleteExport(Database& db, std::string& FileName);
 
 std::string
 GetExportProductsInHTML(export_data ExportData);

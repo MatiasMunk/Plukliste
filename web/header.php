@@ -55,9 +55,29 @@
             width: 20%;
         }
 
-        table,th {
-            border: solid #000 1px;
+        table th, table td {
+			text-align: center;
         }
+		
+		tbody tr:nth-child(even) {
+			background: #e8e7e1;
+		}
+		
+		tbody tr:hover {
+			background: #d4d1be;
+		}
+		
+		tbody td input {
+			background: transparent;
+			border: none;
+			text-align: center;
+		}
+		
+		tbody td input:hover {
+			background: transparent;
+			border: 1px solid black;
+			text-align: center;
+		}
 
         *{
             margin: 0;

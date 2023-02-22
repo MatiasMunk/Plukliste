@@ -137,6 +137,20 @@ GetExportDataCSV(std::ifstream& File)
     return ExportData;
 }
 
+bool
+IsActualProduct(export_product_data ExportProduct)
+{
+    if(ExportProduct.ProductId.find("PRINT") != std::string::npos ||
+       ExportProduct.ProductId.find("LABEL") != std::string::npos)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 export_data
 GetExportData(std::string& FileName)
 {
@@ -159,11 +173,25 @@ GetExportData(std::string& FileName)
 }
 
 bool
-DeleteExport(std::string& FileName)
+DeleteExport(Database& db, std::string& FileName)
 {
-    if(!remove(FileName.c_str()))
+    export_data ExportData = GetExportData(FileName);
+    
+    if(remove(FileName.c_str()) != 0)
     {
         return false;
+    }
+    
+    for(auto Product : ExportData.ExportProducts)
+    {
+        if(IsActualProduct(Product))
+        {
+            std::string DBQuery = "UPDATE `products` SET stock = stock - " + std::to_string(Product.Amount) + " WHERE `product_id` = '" +
+                std::string(Product.ProductId.c_str()) + "';";
+            
+            Database_Result res = db.Query(DBQuery.c_str());
+            std::cout << res.Result << std::endl;
+        }
     }
     
     return true;

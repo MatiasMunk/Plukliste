@@ -1,0 +1,38 @@
+{
+  "Pluklist":
+  {
+    "Name": "Hans Jensen",
+    "ShippingType": "Post Nord",
+    "Address": "Middelfartvej 9, 5500 Middelfart",
+    "Lines":
+	{
+      "Item":
+	  [
+        {
+          "ProductID": "NETGEAR-C500",
+          "Title": "NETGEAR DOCSIS 3.1 (CM1000)",
+          "Type": "Fysisk",
+          "Amount": 1
+        },
+        {
+          "ProductID": "PRINT-OPGRADE",
+          "Title": "Vejledning Opgradering",
+          "Type": "Print",
+          "Amount": 1
+        },
+        {
+          "ProductID": "Davids Kabel TV",
+          "Title": "Papkasse 170x105x60",
+          "Type": "Fysisk",
+          "Amount": 1
+        },
+        {
+          "ProductID": "LABEL-RETUR",
+          "Title": "Retur label",
+          "Type": "Fysisk",
+          "Amount": 1
+        }
+      ]
+    }
+  }
+}
